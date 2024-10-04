@@ -1,29 +1,25 @@
-const fetch = require('node-fetch');
-
 exports.handler = async (event, context) => {
-    const placeId = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI'; // Replace this with your actual Place ID
-    const apiKey = process.env.GOOGLE_API_KEY; // This accesses your API key from environment variables
-    
-    // Build the URL for the Google Reviews API
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`;
+    const API_KEY = process.env.GOOGLE_API_KEY;
+    const PLACE_ID = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI';
+
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${PLACE_ID}&key=${API_KEY}`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url); // Fetch should be available in the environment
         if (!response.ok) {
-            return {
-                statusCode: response.status,
-                body: JSON.stringify({ message: 'Error fetching data from Google API' }),
-            };
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        const reviews = data.result.reviews || [];
+
         return {
             statusCode: 200,
-            body: JSON.stringify(data.result.reviews), // Return only the reviews
+            body: JSON.stringify(reviews),
         };
     } catch (error) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Server Error', error: error.message }),
+            body: JSON.stringify({ error: error.message }),
         };
     }
 };

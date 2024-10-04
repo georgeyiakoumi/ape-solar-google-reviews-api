@@ -11,8 +11,9 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/reviews', async (req, res) => {
-  const placeId = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI';  // Your place ID
-  const apiKey = 'REDACTED';  // Your Google API Key
+  const apiKey = process.env.GOOGLE_API_KEY;
+  const placeId = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI'; // Your place ID remains in the code
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`;
   
   try {
     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`);

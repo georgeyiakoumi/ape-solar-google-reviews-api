@@ -11,7 +11,7 @@ exports.handler = async (event, context) => {
       const data = await response.json();
   
       const headers = {
-        'Access-Control-Allow-Origin': 'https://www.apesolar.com', 'https://www.ape.solar', 'https://ape-solar.webflow.io',// Allow requests from your domain
+        'Access-Control-Allow-Origin': 'https://www.apesolar.com, https://www.ape.solar, https://ape-solar.webflow.io', // Allow requests from your domain
         'Access-Control-Allow-Headers': 'Content-Type',
       };
   

@@ -1,29 +1,28 @@
-const express = require('express');
-const axios = require('axios');
+// functions/fetch-reviews.js
+const fetch = require('node-fetch');
 
-const app = express();
-const port = process.env.PORT || 3000;
+exports.handler = async (event, context) => {
+    const API_KEY = process.env.GOOGLE_API_KEY; // Use the environment variable for your API key
+    const PLACE_ID = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI';
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${PLACE_ID}&key=${API_KEY}`;
 
-app.get('/api/reviews', async (req, res) => {
-  const apiKey = process.env.GOOGLE_API_KEY;
-  const placeId = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI'; // Your place ID remains in the code
-  const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`;
-  
-  try {
-    const response = await axios.get(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`);
-    res.json(response.data.result.reviews);
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-    res.status(500).send('Failed to fetch reviews');
-  }
-});
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const reviews = data.result.reviews || []; // Default to an empty array if no reviews found
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+        return {
+            statusCode: 200,
+            body: JSON.stringify(reviews),
+        };
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
+    }
+};

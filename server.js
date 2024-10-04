@@ -1,9 +1,6 @@
 // functions/fetch-reviews.js
 
 exports.handler = async (event, context) => {
-  // Dynamically import node-fetch
-  const fetch = (await import('node-fetch')).default;
-
   const API_KEY = process.env.GOOGLE_API_KEY; // Use the environment variable for your API key
   const PLACE_ID = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI';
 

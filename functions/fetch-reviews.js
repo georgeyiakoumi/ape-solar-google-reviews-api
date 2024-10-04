@@ -1,25 +1,35 @@
 exports.handler = async (event, context) => {
-    const API_KEY = process.env.GOOGLE_API_KEY;
-    const PLACE_ID = 'ChIJHWrUoHjFkIgRRHv8S2M2OoI';
-
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${PLACE_ID}&key=${API_KEY}`;
-
+    const placeId = "ChIJHWrUoHjFkIgRRHv8S2M2OoI"; // Your Place ID
+    const apiKey = process.env.GOOGLE_API_KEY; // Get your API key from environment variables
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`;
+  
     try {
-        const response = await fetch(url); // Fetch should be available in the environment
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        const reviews = data.result.reviews || [];
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(reviews),
-        };
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText);
+      }
+      const data = await response.json();
+  
+      const headers = {
+        'Access-Control-Allow-Origin': 'https://www.apesolar.com', // Allow requests from your domain
+        'Access-Control-Allow-Headers': 'Content-Type',
+      };
+  
+      return {
+        statusCode: 200,
+        headers: headers,
+        body: JSON.stringify(data),
+      };
     } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
-        };
+      console.error('Error fetching data:', error);
+  
+      return {
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*', // Allow requests from all origins (or specify your domains)
+        },
+        body: JSON.stringify({ error: 'Error fetching data' }),
+      };
     }
-};
+  };
+  
